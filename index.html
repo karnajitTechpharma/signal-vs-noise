@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f3f0e7">
+  <meta name="description" content="A quick daily focus game. Catch the signal. Ignore the noise.">
+  <title>Signal vs. Noise — A Tiny Focus Game</title>
+  <style>
+    :root{--paper:#f3f0e7;--ink:#172b2a;--muted:#687a73;--green:#c9e36b;--orange:#fa7654;--line:#d8d9c9;--cream:#fcfbf6;--shadow:0 18px 50px #283c3214}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;min-height:100vh}
+    button{font:inherit;color:inherit} .shell{max-width:1120px;margin:auto;padding:26px 36px 30px;min-height:100vh;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between}.brand{font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;display:flex;gap:11px;align-items:center}.brand-icon{width:30px;height:30px;border-radius:50%;background:var(--ink);color:var(--green);display:grid;place-items:center;font-size:16px}.edition{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+    main{width:min(100%,890px);margin:auto;display:grid;grid-template-columns:1fr 300px;gap:62px;align-items:center;padding:38px 0 48px}.eyebrow{font-weight:800;text-transform:uppercase;letter-spacing:.19em;font-size:11px;color:#64764a;margin:0 0 17px}h1{font-size:clamp(42px,6vw,70px);line-height:.98;letter-spacing:-.065em;margin:0;max-width:570px}h1 em{font-family:Georgia,serif;font-weight:400;letter-spacing:-.07em}.intro{max-width:480px;color:#526560;font-size:16px;line-height:1.65;margin:22px 0 28px}.start-row{display:flex;gap:15px;align-items:center}.primary{background:var(--ink);color:white;border:0;border-radius:999px;padding:15px 25px;font-weight:750;cursor:pointer;transition:transform .18s,background .18s}.primary:hover{background:#294844;transform:translateY(-2px)}.hint{font-size:12px;color:var(--muted)}
+    .preview{position:relative;background:var(--cream);padding:25px;border:1px solid var(--line);border-radius:19px;box-shadow:var(--shadow);transform:rotate(2deg)}.preview:after{content:"";position:absolute;inset:9px -10px -10px 10px;border:1px solid #d8d9c9;border-radius:19px;z-index:-1;transform:rotate(-4deg)}.preview-top{display:flex;justify-content:space-between;text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:.13em;color:var(--muted)}.signal-dot{background:var(--green);width:9px;height:9px;border-radius:50%;display:inline-block;margin-right:6px}.preview-card{margin:26px 0 20px;border-radius:13px;background:#eef0e5;padding:21px 18px}.preview-card small{color:#74806e;text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:.12em}.preview-card h2{font-size:21px;line-height:1.15;letter-spacing:-.04em;margin:10px 0 8px}.preview-card p{font-size:12px;line-height:1.5;color:#66716a;margin:0}.choice{display:flex;justify-content:space-between;align-items:center;padding-top:15px;border-top:1px solid var(--line);font-size:11px;color:#7b8780}.choice span:last-child{font-weight:800;color:var(--ink)}
+    .game{grid-column:1/-1;display:none}.game.active{display:block}.intro-view.hidden{display:none}.game-head{display:flex;justify-content:space-between;align-items:end;margin-bottom:16px}.game-head h2{font-size:27px;letter-spacing:-.05em;margin:0}.game-head p{color:var(--muted);font-size:13px;margin:5px 0 0}.stats{display:flex;gap:25px}.stat{text-align:right}.stat b{display:block;font-size:21px;letter-spacing:-.04em}.stat span{font-size:9px;text-transform:uppercase;letter-spacing:.13em;color:var(--muted);font-weight:800}.bar{height:6px;background:#dfe0d3;border-radius:8px;overflow:hidden;margin-bottom:23px}.bar i{display:block;height:100%;background:var(--orange);width:100%;transition:width .4s linear}
+    .play-area{display:grid;grid-template-columns:1fr 200px;gap:20px}.card-stage{min-height:285px;background:var(--cream);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:35px 42px;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden}.card-stage:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:#eff1e3;right:-75px;top:-100px}.card-meta{z-index:1;display:flex;gap:8px;align-items:center;color:#708077;text-transform:uppercase;font-size:10px;letter-spacing:.14em;font-weight:800}.tag{padding:6px 9px;border-radius:99px;background:#e8edcf;color:#53633b}.card-stage h3{z-index:1;position:relative;font-size:clamp(25px,4vw,38px);letter-spacing:-.055em;line-height:1.13;max-width:620px;margin:18px 0 11px}.card-stage .desc{position:relative;z-index:1;color:#65746d;font-size:14px;line-height:1.55;margin:0;max-width:520px}.actions{display:grid;grid-template-rows:1fr 1fr;gap:12px}.pick{border:1px solid var(--line);background:var(--cream);border-radius:16px;padding:18px;text-align:left;cursor:pointer;transition:.18s}.pick:hover{transform:translateY(-2px);box-shadow:var(--shadow)}.pick strong{font-size:14px;display:block}.pick span{font-size:11px;color:var(--muted);display:block;margin-top:5px}.pick .key{float:right;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:10px;color:#819087}.pick.focus-pick{background:var(--green);border-color:var(--green)}.feedback{height:26px;text-align:center;font-weight:800;font-size:13px;padding-top:6px}.feedback.good{color:#4a7132}.feedback.bad{color:#c6573d}
+    .result{display:none;text-align:center;padding:45px 15px 35px;background:var(--cream);border:1px solid var(--line);border-radius:20px}.result.active{display:block}.result .stamp{font-size:11px;text-transform:uppercase;letter-spacing:.17em;color:#71805d;font-weight:800}.result h2{font-size:clamp(38px,6vw,60px);letter-spacing:-.06em;margin:12px 0}.result p{color:var(--muted);line-height:1.6;max-width:480px;margin:0 auto 22px}.result-score{font-size:14px;color:#63736b;margin-bottom:25px}.result-score b{font-size:24px;color:var(--ink)}.result-actions{display:flex;justify-content:center;gap:10px}.secondary{border:1px solid var(--line);background:transparent;border-radius:99px;padding:13px 20px;cursor:pointer;font-weight:700}
+    footer{border-top:1px solid var(--line);padding-top:17px;display:flex;justify-content:space-between;color:var(--muted);font-size:11px}.footer-right{letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+    @media(max-width:760px){.shell{padding:20px 20px 22px}main{grid-template-columns:1fr;gap:35px;padding:55px 0}.preview{max-width:390px;width:90%;margin:auto}.play-area{grid-template-columns:1fr}.actions{grid-template-columns:1fr 1fr;grid-template-rows:auto}.pick{text-align:center}.pick .key{float:none;margin-left:8px}.card-stage{padding:28px;min-height:245px}.stats{gap:14px}.edition{font-size:10px}}
+    @media(max-width:440px){.game-head{align-items:start;flex-direction:column;gap:14px}.stats{width:100%;justify-content:space-between}.stat{text-align:left}.actions{gap:8px}.pick{padding:14px 7px}.pick strong{font-size:12px}.pick span{font-size:10px}.hint{max-width:120px;line-height:1.4}.intro{font-size:15px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header><div class="brand"><span class="brand-icon">◉</span> Good Signal Studio</div><div class="edition">A tiny game for a loud world</div></header>
+    <main>
+      <section class="intro-view" id="introView">
+        <p class="eyebrow">A 60-second focus game</p>
+        <h1>Catch the signal.<br><em>Let noise pass.</em></h1>
+        <p class="intro">Your attention is precious. In this tiny daily challenge, decide what truly deserves it. Sort the useful signals from the clever distractions before the clock runs out.</p>
+        <div class="start-row"><button class="primary" id="startBtn">Play today's round <span aria-hidden="true">→</span></button><span class="hint">10 cards · no downloads · just you and your focus</span></div>
+      </section>
+      <aside class="preview" aria-label="Example game card">
+        <div class="preview-top"><span><i class="signal-dot"></i>Incoming</span><span>01 / 10</span></div>
+        <div class="preview-card"><small>Work · 2 min</small><h2>Reply to the client waiting on your decision.</h2><p>They can't move forward until you choose option A or B.</p></div>
+        <div class="choice"><span>Is it worth your attention?</span><span>↑ SIGNAL &nbsp; ↓ NOISE</span></div>
+      </aside>
+      <section class="game" id="gameView" aria-live="polite">
+        <div class="game-head"><div><h2>Find your focus</h2><p>Make the call. Trust your first read.</p></div><div class="stats"><div class="stat"><b id="score">0</b><span>Focus points</span></div><div class="stat"><b id="count">01 / 10</b><span>Card</span></div><div class="stat"><b id="time">60</b><span>Seconds</span></div></div></div>
+        <div class="bar"><i id="timerBar"></i></div>
+        <div class="play-area" id="playArea">
+          <article class="card-stage"><div class="card-meta"><span class="tag" id="category">Work</span><span id="duration">2 min</span></div><h3 id="title"></h3><p class="desc" id="description"></p></article>
+          <div class="actions"><button class="pick focus-pick" id="signalBtn"><strong>That's a signal <span class="key">↑</span></strong><span>Worth your attention</span></button><button class="pick" id="noiseBtn"><strong>That's noise <span class="key">↓</span></strong><span>Can wait or be ignored</span></button></div>
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <section class="result" id="result" aria-live="polite"><div class="stamp">Round complete</div><h2 id="resultTitle">Clear-eyed.</h2><p id="resultCopy"></p><div class="result-score"><b id="finalScore">0</b> focus points · <span id="accuracy">0</span>% instinct accuracy</div><div class="result-actions"><button class="primary" id="againBtn">Play again →</button><button class="secondary" id="homeBtn">Back to start</button></div></section>
+      </section>
+    </main>
+    <footer><span>Built for a little more intention.</span><span class="footer-right">Breathe · Notice · Choose</span></footer>
+  </div>
+  <script>
+    const cards=[
+      {category:'Work',duration:'2 min',title:'Reply to the client waiting on your decision.',description:'They can’t move forward until you choose option A or B.',signal:true},
+      {category:'Social',duration:'30 sec',title:'A notification: someone liked a photo from 2019.',description:'It feels good to see. Nothing needs your response.',signal:false},
+      {category:'Health',duration:'5 min',title:'Stand up, stretch, and refill your water.',description:'You’ve been sitting for two hours and your shoulders know it.',signal:true},
+      {category:'Internet',duration:'“Just a sec”',title:'A video claims to reveal the one habit successful people hide.',description:'The thumbnail has three arrows and a very surprised face.',signal:false},
+      {category:'People',duration:'3 min',title:'Your friend sent “can we talk?” and you have a quiet moment.',description:'A small check-in now could mean a lot to someone you care about.',signal:true},
+      {category:'Inbox',duration:'1 min',title:'An email newsletter has a subject line in all caps.',description:'“YOU WON’T BELIEVE THIS” — sent to 80,000 other people too.',signal:false},
+      {category:'Tomorrow',duration:'4 min',title:'Write down the one thing that would make tomorrow easier.',description:'You’ve been carrying it in your head since breakfast.',signal:true},
+      {category:'Phone',duration:'“Quick check”',title:'Open an app because your hand reached for your phone.',description:'You can’t remember what you meant to look up.',signal:false},
+      {category:'Work',duration:'10 min',title:'The deadline moved up. Your first draft is due today.',description:'You know the next step, and starting it will unblock the team.',signal:true},
+      {category:'Shopping',duration:'Now or never',title:'A timer says this deal expires in 04:59.',description:'You hadn’t planned to buy it. The same timer was here yesterday.',signal:false},
+      {category:'Mind',duration:'1 min',title:'Take one slow breath before switching to the next task.',description:'There’s no prize for carrying the last thing into this one.',signal:true},
+      {category:'Feed',duration:'Endless',title:'A stranger is confidently wrong in the comments.',description:'You could correct them. You could also keep your afternoon.',signal:false}
+    ];
+    const $=id=>document.getElementById(id);let deck=[],idx=0,score=0,seconds=60,tick=null,locked=false,answered=0,correct=0;
+    function shuffle(){deck=[...cards].sort(()=>Math.random()-.5).slice(0,10)}
+    function begin(){clearInterval(tick);shuffle();idx=score=answered=correct=0;seconds=60;locked=false;$('introView').classList.add('hidden');document.querySelector('.preview').style.display='none';$('gameView').classList.add('active');$('playArea').style.display='grid';$('result').classList.remove('active');$('feedback').textContent='';updateTimer();showCard();tick=setInterval(()=>{seconds--;updateTimer();if(seconds<=0)finish()},1000)}
+    function updateTimer(){$('time').textContent=seconds;$('timerBar').style.width=Math.max(0,seconds/60*100)+'%'}
+    function showCard(){if(idx>=deck.length){finish();return}let c=deck[idx];$('category').textContent=c.category;$('duration').textContent=c.duration;$('title').textContent=c.title;$('description').textContent=c.description;$('count').textContent=String(idx+1).padStart(2,'0')+' / 10';$('feedback').textContent='';$('feedback').className='feedback';locked=false}
+    function answer(choice){if(locked||idx>=deck.length)return;locked=true;let c=deck[idx],ok=choice===c.signal;answered++;if(ok){correct++;score+=100;seconds=Math.min(60,seconds+2);$('feedback').textContent='Good read. +100';$('feedback').className='feedback good'}else{$('feedback').textContent=c.signal?'That one mattered. Keep going.':'A little noise slipped through.';$('feedback').className='feedback bad'}$('score').textContent=score;setTimeout(()=>{idx++;showCard()},500)}
+    function finish(){if($('result').classList.contains('active'))return;clearInterval(tick);$('playArea').style.display='none';$('feedback').textContent='';$('result').classList.add('active');let pct=answered?Math.round(correct/answered*100):0;$('finalScore').textContent=score;$('accuracy').textContent=pct;let title=score>=800?'Clear-eyed.':score>=500?'Finding your rhythm.':'Every pause counts.';$('resultTitle').textContent=title;$('resultCopy').textContent=answered>=10?'You gave '+correct+' of '+answered+' cards the call they deserved. Take that little bit of intention with you.':`The clock ran out after ${answered} card${answered===1?'':'s'}. Your attention did its best. Ready for another round?`;}
+    $('startBtn').onclick=begin;$('againBtn').onclick=begin;$('homeBtn').onclick=()=>{clearInterval(tick);$('gameView').classList.remove('active');$('introView').classList.remove('hidden');document.querySelector('.preview').style.display='block'};$('signalBtn').onclick=()=>answer(true);$('noiseBtn').onclick=()=>answer(false);document.addEventListener('keydown',e=>{if(e.key==='ArrowUp')answer(true);if(e.key==='ArrowDown')answer(false)});
+  </script>
+</body>
+</html>
+
